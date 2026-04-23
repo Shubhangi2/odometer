@@ -39,26 +39,35 @@ class CustomTextFormField extends StatelessWidget {
       obscureText: obscureText ?? false,
       maxLines: obscureText ?? false ? 1 : maxLines,
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        fillColor: AppColors.secondary,
+        filled: true,
         floatingLabelStyle: WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.error)) {
             return TextStyle(color: Colors.red[900]);
           }
-          return const TextStyle(color: Colors.red);
+          return const TextStyle(color: AppColors.primary);
         }),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(32),
           borderSide: const BorderSide(color: AppColors.primary, width: 2.0),
         ),
         label: Text(label),
         alignLabelWithHint: true,
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? Colors.red),
+          borderRadius: BorderRadius.circular(32),
+          borderSide: BorderSide(color: borderColor ?? AppColors.secondaryBorder),
         ),
 
-        hint: Text(hintText, style: TextStyle(color: hintTextColor ?? Colors.red, fontSize: 16)),
+        hint: Text(
+          hintText,
+          style: TextStyle(color: hintTextColor ?? AppColors.hintGray, fontSize: 16),
+        ),
         prefixIcon: prefixIcon,
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(32),
+          borderSide: BorderSide(color: borderColor ?? AppColors.secondaryBorder),
+        ),
       ),
       validator: (value) => onValidate(value!),
     );

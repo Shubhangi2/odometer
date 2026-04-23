@@ -32,19 +32,22 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
+      height: height ?? 48,
       width: width ?? double.infinity,
       decoration: BoxDecoration(
         border: Border.all(
           width: borderColor == null ? 0 : 1,
-          color: borderColor ?? Colors.transparent,
+          color: borderColor ?? AppColors.primaryButtonBorder,
         ),
-        borderRadius: BorderRadius.circular(borderRadius ?? 18),
+        borderRadius: BorderRadius.circular(borderRadius ?? 32),
         color: color ?? AppColors.primary,
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius ?? 24)),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: borderColor ?? AppColors.primaryButtonBorder),
+            borderRadius: BorderRadius.circular(borderRadius ?? 32),
+          ),
           backgroundColor: color ?? Colors.transparent,
           padding: padding == null ? null : EdgeInsets.symmetric(horizontal: padding!),
         ),
