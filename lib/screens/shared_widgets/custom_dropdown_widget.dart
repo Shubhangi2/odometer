@@ -27,58 +27,61 @@ class CustomDropdownWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return DropdownMenu<T>(
-          menuStyle: MenuStyle(
-            maximumSize: WidgetStateProperty.all(Size(width ?? constraints.maxWidth, 500)),
+        return SizedBox(
+          height: 48,
+          child: DropdownMenu<T>(
+            menuStyle: MenuStyle(
+              maximumSize: WidgetStateProperty.all(Size(width ?? constraints.maxWidth, 500)),
 
-            backgroundColor: WidgetStateProperty.all(Colors.white),
-            shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                side: const BorderSide(color: Colors.red, width: 1.0),
-              ),
-            ),
-          ),
-          width: width ?? constraints.maxWidth,
-          textStyle: const TextStyle(color: Colors.red, fontSize: 16),
-
-          initialSelection: initialSelection,
-          inputDecorationTheme: InputDecorationTheme(
-            hintStyle: const TextStyle(color: Colors.red),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              borderSide: const BorderSide(color: Colors.red, width: 1.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              borderSide: const BorderSide(color: Colors.red, width: 1.0),
-            ),
-
-            contentPadding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          ),
-          hintText: hintText,
-          onSelected: (T? value) {
-            if (value != null) {
-              onSelected(value);
-            }
-          },
-          dropdownMenuEntries: dropdownList.map<DropdownMenuEntry<T>>((T item) {
-            return DropdownMenuEntry<T>(
-              value: item,
-              label: itemToString(item),
-              labelWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                child: Text(
-                  itemToString(item),
-                  softWrap: true,
-                  maxLines: null, // Allows unlimited lines
-                  overflow: TextOverflow.visible,
+              backgroundColor: WidgetStateProperty.all(Colors.white),
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24.0),
+                  side: const BorderSide(color: AppColors.secondaryBorder, width: 1.0),
                 ),
               ),
-            );
-          }).toList(),
+            ),
+            width: width ?? constraints.maxWidth,
+            textStyle: const TextStyle(color: Colors.white, fontSize: 16),
+
+            initialSelection: initialSelection,
+            inputDecorationTheme: InputDecorationTheme(
+              hintStyle: const TextStyle(color: AppColors.hintGray),
+              filled: true,
+              fillColor: AppColors.secondary,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24.0),
+                borderSide: const BorderSide(color: AppColors.secondaryBorder, width: 1.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(24.0),
+                borderSide: const BorderSide(color: AppColors.secondaryBorder, width: 1.0),
+              ),
+
+              contentPadding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            ),
+            hintText: hintText,
+            onSelected: (T? value) {
+              if (value != null) {
+                onSelected(value);
+              }
+            },
+            dropdownMenuEntries: dropdownList.map<DropdownMenuEntry<T>>((T item) {
+              return DropdownMenuEntry<T>(
+                value: item,
+                label: itemToString(item),
+                labelWidget: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                  child: Text(
+                    itemToString(item),
+                    softWrap: true,
+                    maxLines: null, // Allows unlimited lines
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         );
       },
     );

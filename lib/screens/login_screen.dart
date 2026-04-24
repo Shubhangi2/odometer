@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:speedometer/core/app_colors.dart';
+import 'package:speedometer/screens/home_screen.dart';
 import 'package:speedometer/screens/shared_widgets/custom_button.dart';
 import 'package:speedometer/screens/shared_widgets/custom_text_form_field.dart';
 
@@ -38,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Form(
               key: formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 24,
                 children: [
                   CustomTextFormField(
@@ -60,7 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 52),
-            CustomButton(text: "Login", onPressed: () {}),
+            CustomButton(
+              text: "Login",
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+            ),
           ],
         ),
       ),
