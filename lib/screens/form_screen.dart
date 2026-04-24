@@ -1,17 +1,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:speedometer/core/app_colors.dart';
 import 'package:speedometer/models/odometer_model.dart';
 import 'package:speedometer/screens/capture_image_screen.dart';
 import 'package:speedometer/screens/shared_widgets/custom_button.dart';
 import 'package:speedometer/screens/shared_widgets/custom_dropdown_widget.dart';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:speedometer/screens/shared_widgets/custom_input_formatter.dart';
-import 'package:speedometer/screens/shared_widgets/custom_text_form_field.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -20,8 +15,6 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  CameraController? _cameraController;
-  final TextRecognizer _textRecognizer = TextRecognizer();
   TextEditingController scannedTextController = TextEditingController();
   TextEditingController addressTextController = TextEditingController();
 

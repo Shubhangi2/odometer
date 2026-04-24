@@ -32,8 +32,7 @@ class CustomDropdownWidget<T> extends StatelessWidget {
           child: DropdownMenu<T>(
             menuStyle: MenuStyle(
               maximumSize: WidgetStateProperty.all(Size(width ?? constraints.maxWidth, 500)),
-
-              backgroundColor: WidgetStateProperty.all(Colors.white),
+              backgroundColor: WidgetStateProperty.all(AppColors.secondary),
               shape: WidgetStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.0),

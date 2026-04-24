@@ -1,4 +1,3 @@
-import 'package:speedometer/core/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 

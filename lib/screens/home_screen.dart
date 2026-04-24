@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:speedometer/core/app_colors.dart';
 import 'package:speedometer/screens/form_screen.dart';
