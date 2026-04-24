@@ -12,15 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List<CameraDescription> cameras;
   @override
   void initState() {
     super.initState();
-    callAsyncTask();
-  }
-
-  void callAsyncTask() async {
-    cameras = await availableCameras();
   }
 
   @override
@@ -55,10 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
               CustomButton(
                 text: "Start Journey",
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FormScreen(cameras: cameras)),
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => FormScreen()));
                 },
               ),
               SizedBox(height: 24),
