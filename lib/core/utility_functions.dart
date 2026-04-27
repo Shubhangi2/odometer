@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -44,11 +45,11 @@ class UtilityFunctions {
     return formattedDate;
   }
 
-  static Future<bool> locationServiceEnabledOrNot() async {
-    ServiceStatus serviceStatus = await Permission.locationWhenInUse.serviceStatus;
-    bool enabled = (serviceStatus == ServiceStatus.enabled);
-    return enabled;
-  }
+  // static Future<bool> locationServiceEnabledOrNot() async {
+  //   ServiceStatus serviceStatus = await Permission.locationWhenInUse.serviceStatus;
+  //   bool enabled = (serviceStatus == ServiceStatus.enabled);
+  //   return enabled;
+  // }
 
   static String getErrorMessage(dynamic error) {
     if (error is DioException) {
@@ -66,5 +67,40 @@ class UtilityFunctions {
       }
     }
     return 'An unexpected error occurred.';
+  }
+
+  Future<Position?> getCurrentLocation() async {
+    await requestLocationPermission();
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: AndroidSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 10),
+        ),
+      );
+      return position;
+    } catch (e) {
+      print(e);
+      print("failed to get current location");
+    }
+    return null;
+  }
+
+  static Future<bool> requestLocationPermission() async {
+    PermissionStatus status = await Permission.location.status;
+
+    if (status.isGranted) {
+      return true;
+    }
+
+    if (status.isDenied) {
+      status = await Permission.location.request();
+      return status.isGranted;
+    }
+
+    if (status.isPermanentlyDenied) {
+      return false;
+    }
+    return false;
   }
 }

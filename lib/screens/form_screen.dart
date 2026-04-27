@@ -1,29 +1,60 @@
+import 'dart:convert';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:speedometer/core/app_colors.dart';
+import 'package:speedometer/core/utility_functions.dart';
+import 'package:speedometer/models/end_journey_model.dart';
+import 'package:speedometer/models/journey_model.dart';
 import 'package:speedometer/models/odometer_model.dart';
+import 'package:speedometer/models/start_journey_model.dart';
+import 'package:speedometer/provider/journey_provider.dart';
 import 'package:speedometer/screens/capture_image_screen.dart';
 import 'package:speedometer/screens/shared_widgets/custom_button.dart';
 import 'package:speedometer/screens/shared_widgets/custom_dropdown_widget.dart';
 import 'package:speedometer/screens/shared_widgets/custom_input_formatter.dart';
+import 'package:speedometer/screens/shared_widgets/show_snackbar.dart';
 
 class FormScreen extends StatefulWidget {
-  const FormScreen({super.key});
+  final bool isStartJourney;
+  final JourneyModel? startJourneyModel;
+  final List<CameraDescription> cameras;
+
+  const FormScreen({
+    super.key,
+    required this.isStartJourney,
+    this.startJourneyModel,
+    required this.cameras,
+  });
   @override
   State<FormScreen> createState() => _FormScreenState();
 }
 
 class _FormScreenState extends State<FormScreen> {
   TextEditingController scannedTextController = TextEditingController();
-  TextEditingController addressTextController = TextEditingController();
-
-  late List<CameraDescription> cameras;
 
   bool isImageCaptured = false;
   Uint8List? frozenBytes;
+  bool isclientSelected = false;
+  String selectedClient = "";
+  String journeyImage = "";
 
-  List<String> clients = ["client 1", "client 2", "client 3"];
+  List<String> clients = [
+    "Shubhangi",
+    "Yogita",
+    "Renuka",
+    "Shrishail",
+    "Saurabh",
+    "Sandeep",
+    "Rushabh",
+    "Bhalchandra",
+    "Dattatrey",
+    "Anirudh",
+  ];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -41,13 +72,63 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   void callAsyncTask() async {
-    cameras = await availableCameras();
+    await UtilityFunctions().getCurrentLocation();
   }
 
-  @override
-  void dispose() {
-    scannedTextController.dispose();
-    super.dispose();
+  Future<void> submitDetails(bool isStartJourney) async {
+    if (!isclientSelected && isStartJourney) {
+      showSnackBar(context, "Please select client name", false);
+      return;
+    }
+    if (scannedTextController.text.isEmpty) {
+      showSnackBar(context, "Speedometer not captured", false);
+      return;
+    }
+    Position? position = await UtilityFunctions().getCurrentLocation();
+    if (position == null) {
+      showSnackBar(context, "Location not found", false);
+      return;
+    }
+    if (journeyImage.isEmpty) {
+      showSnackBar(context, "Image not captured, please try again", false);
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+
+    final res;
+    if (!isStartJourney && widget.startJourneyModel != null) {
+      EndJourneyModel endJourneyModel = EndJourneyModel(
+        endReading: scannedTextController.text,
+        endLocation: "${position.latitude},${position.longitude}",
+        endReadingImage: journeyImage,
+        endedAt: DateTime.now().toString(),
+        id: widget.startJourneyModel!.id,
+        isOngoing: false,
+      );
+      res = await context.read<JourneyProvider>().endJourney(endJourneyModel: endJourneyModel);
+    } else {
+      StartJourneyModel startJourneyModel = StartJourneyModel(
+        clientName: selectedClient,
+        startLocation: "${position.latitude},${position.longitude}",
+        isOngoing: true,
+        address: "dummy address",
+        startReading: scannedTextController.text,
+        startedAt: DateTime.now().toString(),
+        startReadingImage: journeyImage,
+      );
+      res = await context.read<JourneyProvider>().startJourney(
+        startJourneyModel: startJourneyModel,
+      );
+    }
+    res.fold((l) => showSnackBar(context, l.message, false), (r) {
+      showSnackBar(context, r, true);
+      Navigator.of(context).pop(true);
+    });
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -75,22 +156,32 @@ class _FormScreenState extends State<FormScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: Text(
-                      "Start-journey Details",
+                      "${widget.isStartJourney ? "Start" : "End"}-journey Details",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   SizedBox(height: 20),
-                  CustomDropdownWidget(
-                    dropdownList: clients,
-                    hintText: "Select Client",
-                    icon: Icons.business,
-                    onSelected: (value) {},
-                    itemToString: (item) => item,
-                  ),
+                  widget.isStartJourney
+                      ? CustomDropdownWidget(
+                          dropdownList: clients,
+                          hintText: "Select Client",
+                          icon: Icons.business,
+                          onSelected: (value) {
+                            setState(() {
+                              isclientSelected = true;
+                              selectedClient = value;
+                            });
+                          },
+                          itemToString: (item) => item,
+                        )
+                      : Text(
+                          "Selected Client - Client 1",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
 
                   const SizedBox(height: 20),
-                  Text("Address : "),
+                  Text("Address : ", style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 12),
 
                   Container(
@@ -101,7 +192,7 @@ class _FormScreenState extends State<FormScreen> {
                     ),
                     height: MediaQuery.of(context).size.height * 0.40,
                     width: double.infinity,
-                    child: isImageCaptured ? _buildFrozenView() : _captureImageScreen(),
+                    child: isImageCaptured ? _buildFrozenView() : _clickToCaptureView(),
                   ),
                   const SizedBox(height: 12),
 
@@ -144,7 +235,13 @@ class _FormScreenState extends State<FormScreen> {
                     ),
 
                   SizedBox(height: 24),
-                  if (isImageCaptured) CustomButton(text: "Submit", onPressed: () {}),
+                  if (isImageCaptured)
+                    CustomButton(
+                      text: "Submit",
+                      onPressed: () async {
+                        await submitDetails(widget.isStartJourney);
+                      },
+                    ),
                 ],
               ),
             ),
@@ -162,14 +259,14 @@ class _FormScreenState extends State<FormScreen> {
     );
   }
 
-  Widget _captureImageScreen() {
+  Widget _clickToCaptureView() {
     return SizedBox(
       child: InkWell(
         onTap: () async {
           OdometerModel? result = await Navigator.push(
             context,
             MaterialPageRoute<OdometerModel>(
-              builder: (context) => CaptureImageScreen(cameras: cameras),
+              builder: (context) => CaptureImageScreen(cameras: widget.cameras),
             ),
           );
 
@@ -178,6 +275,7 @@ class _FormScreenState extends State<FormScreen> {
               scannedTextController.text = result.odometerValue;
               isImageCaptured = true;
               frozenBytes = result.capturedImage;
+              journeyImage = base64Encode(frozenBytes!);
             });
           }
         },
@@ -207,5 +305,11 @@ class _FormScreenState extends State<FormScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    scannedTextController.dispose();
+    super.dispose();
   }
 }

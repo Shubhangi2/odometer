@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       body: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/bg_image.jpg'),

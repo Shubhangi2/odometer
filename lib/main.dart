@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:speedometer/core/app_service.dart';
+import 'package:speedometer/screens/home_screen.dart';
 import 'package:speedometer/screens/login_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: AppService.provideMultiProviders(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Speedometer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const LoginScreen(),
+      home: const HomeScreen(),
     );
   }
 }

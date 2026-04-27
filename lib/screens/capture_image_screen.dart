@@ -164,7 +164,7 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
               Column(
                 children: [
                   Container(
-                    margin: const EdgeInsets.all(24),
+                    margin: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.secondaryBorder, width: 1.5),
                       borderRadius: BorderRadius.circular(24),
@@ -177,7 +177,7 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "$_liveReading km",
+                        _liveReading.isEmpty ? "-" : "$_liveReading km",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 36,
