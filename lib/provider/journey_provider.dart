@@ -25,6 +25,10 @@ class JourneyProvider extends ChangeNotifier {
     return await dao.getAllJourneys();
   }
 
+  Future<List<JourneyModel>> getLastFiveJourneys() async {
+    return await dao.getLastFiveJourneys();
+  }
+
   Future<JourneyModel?> getLastJourney() async {
     return await dao.getLastJourney();
   }

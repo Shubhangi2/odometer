@@ -75,6 +75,61 @@ class _FormScreenState extends State<FormScreen> {
     await UtilityFunctions().getCurrentLocation();
   }
 
+  // Future<void> submitDetails(bool isStartJourney) async {
+  //   if (!isclientSelected && isStartJourney) {
+  //     showSnackBar(context, "Please select client name", false);
+  //     return;
+  //   }
+  //   if (scannedTextController.text.isEmpty) {
+  //     showSnackBar(context, "Speedometer not captured", false);
+  //     return;
+  //   }
+  //   Position? position = await UtilityFunctions().getCurrentLocation();
+  //   if (position == null) {
+  //     showSnackBar(context, "Location not found", false);
+  //     return;
+  //   }
+  //   if (journeyImage.isEmpty) {
+  //     showSnackBar(context, "Image not captured, please try again", false);
+  //     return;
+  //   }
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+
+  //   final res;
+  //   if (!isStartJourney && widget.startJourneyModel != null) {
+  //     EndJourneyModel endJourneyModel = EndJourneyModel(
+  //       endReading: scannedTextController.text,
+  //       endLocation: "${position.latitude},${position.longitude}",
+  //       endReadingImage: journeyImage,
+  //       endedAt: DateTime.now().toString(),
+  //       id: widget.startJourneyModel!.id,
+  //       isOngoing: false,
+  //     );
+  //     res = await context.read<JourneyProvider>().endJourney(endJourneyModel: endJourneyModel);
+  //   } else {
+  //     StartJourneyModel startJourneyModel = StartJourneyModel(
+  //       clientName: selectedClient,
+  //       startLocation: "${position.latitude},${position.longitude}",
+  //       isOngoing: true,
+  //       address: "dummy address",
+  //       startReading: scannedTextController.text,
+  //       startedAt: DateTime.now().toString(),
+  //       startReadingImage: journeyImage,
+  //     );
+  //     res = await context.read<JourneyProvider>().startJourney(
+  //       startJourneyModel: startJourneyModel,
+  //     );
+  //   }
+  //   res.fold((l) => showSnackBar(context, l.message, false), (r) {
+  //     showSnackBar(context, r, true);
+  //     Navigator.of(context).pop(true);
+  //   });
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
   Future<void> submitDetails(bool isStartJourney) async {
     if (!isclientSelected && isStartJourney) {
       showSnackBar(context, "Please select client name", false);
@@ -84,7 +139,11 @@ class _FormScreenState extends State<FormScreen> {
       showSnackBar(context, "Speedometer not captured", false);
       return;
     }
+
     Position? position = await UtilityFunctions().getCurrentLocation();
+
+    if (!mounted) return; // ✅ guard after await
+
     if (position == null) {
       showSnackBar(context, "Location not found", false);
       return;
@@ -93,9 +152,11 @@ class _FormScreenState extends State<FormScreen> {
       showSnackBar(context, "Image not captured, please try again", false);
       return;
     }
-    setState(() {
-      isLoading = true;
-    });
+
+    setState(() => isLoading = true);
+
+    // ✅ capture provider BEFORE awaits
+    final provider = context.read<JourneyProvider>();
 
     final res;
     if (!isStartJourney && widget.startJourneyModel != null) {
@@ -107,7 +168,7 @@ class _FormScreenState extends State<FormScreen> {
         id: widget.startJourneyModel!.id,
         isOngoing: false,
       );
-      res = await context.read<JourneyProvider>().endJourney(endJourneyModel: endJourneyModel);
+      res = await provider.endJourney(endJourneyModel: endJourneyModel);
     } else {
       StartJourneyModel startJourneyModel = StartJourneyModel(
         clientName: selectedClient,
@@ -118,17 +179,17 @@ class _FormScreenState extends State<FormScreen> {
         startedAt: DateTime.now().toString(),
         startReadingImage: journeyImage,
       );
-      res = await context.read<JourneyProvider>().startJourney(
-        startJourneyModel: startJourneyModel,
-      );
+      res = await provider.startJourney(startJourneyModel: startJourneyModel);
     }
+
+    if (!mounted) return; // ✅ guard before using context again
+
     res.fold((l) => showSnackBar(context, l.message, false), (r) {
       showSnackBar(context, r, true);
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop(true); // ✅ now safe
     });
-    setState(() {
-      isLoading = false;
-    });
+
+    setState(() => isLoading = false);
   }
 
   @override
@@ -166,6 +227,7 @@ class _FormScreenState extends State<FormScreen> {
                       ? CustomDropdownWidget(
                           dropdownList: clients,
                           hintText: "Select Client",
+
                           icon: Icons.business,
                           onSelected: (value) {
                             setState(() {
@@ -218,7 +280,7 @@ class _FormScreenState extends State<FormScreen> {
                             controller: scannedTextController,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(20),
+                              LengthLimitingTextInputFormatter(7),
                               CustomInputFormatter(),
                             ],
                             keyboardType: const TextInputType.numberWithOptions(decimal: false),

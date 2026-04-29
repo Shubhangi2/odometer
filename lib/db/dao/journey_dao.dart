@@ -63,6 +63,27 @@ class JourneyDao {
     }
   }
 
+  Future<List<JourneyModel>> getLastFiveJourneys() async {
+    final db = await sqlHelper.database;
+    try {
+      var res = await db.query(
+        JourneyTable.tableName,
+        orderBy: '${JourneyTable.columnId} DESC',
+        limit: 5,
+      );
+
+      List<JourneyModel> journeys = [];
+      for (var journey in res) {
+        print(journey);
+        journeys.add(JourneyModel.fromJson(journey));
+      }
+      return journeys;
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   Future<JourneyModel?> getLastJourney() async {
     final db = await sqlHelper.database;
     try {

@@ -27,16 +27,17 @@ class _HomeScreenState extends State<HomeScreen> {
     callAsyncTask();
   }
 
-  void callAsyncTask() async {
+  Future<void> callAsyncTask() async {
     currentJourneyModel = await context.read<JourneyProvider>().getLastJourney();
-    journeys = await context.read<JourneyProvider>().getAllJourneys();
+    journeys = await context.read<JourneyProvider>().getLastFiveJourneys();
     if (currentJourneyModel != null && currentJourneyModel!.isOngoing == true) {
       isOngoingJourney = true;
     } else {
       isOngoingJourney = false;
     }
-    setState(() {});
     cameras = await availableCameras();
+
+    setState(() {});
   }
 
   @override
@@ -58,31 +59,32 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 28),
               Text('Hello', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, height: 1)),
               SizedBox(height: 12),
               Text(
                 'Shubhangi Jadhav',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, height: 1),
               ),
-              SizedBox(height: 24),
-              Row(spacing: 24, children: [actionCardWidget(), actionCardWidget()]),
-              SizedBox(height: 24),
+              SizedBox(height: 16),
+              Row(spacing: 16, children: [actionCardWidget(), actionCardWidget()]),
+              SizedBox(height: 16),
               !isOngoingJourney
                   ? CustomButton(
                       text: "Start Journey",
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
                                 FormScreen(isStartJourney: true, cameras: cameras),
                           ),
                         );
+                        await callAsyncTask();
                       },
                     )
                   : SizedBox(),
-              SizedBox(height: isOngoingJourney ? 0 : 24),
+              SizedBox(height: isOngoingJourney ? 0 : 16),
               isOngoingJourney
                   ? Column(
                       children: [
@@ -91,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         CustomButton(
                           text: "End Journey",
                           onPressed: () async {
-                            bool? result = await Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute<bool>(
                                 builder: (context) => FormScreen(
@@ -101,9 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             );
-                            if (result == true) {
-                              callAsyncTask();
-                            }
+
+                            await callAsyncTask();
                           },
                           color: Colors.red,
                           borderColor: const Color.fromARGB(255, 241, 95, 85),
@@ -113,12 +114,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   : SizedBox(),
 
-              Text("Recent journies", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text("Recent Journeys", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               SizedBox(height: 8),
               Expanded(
-                child: ListView.builder(
+                child: ListView.separated(
                   itemBuilder: (context, index) => historyWidget(journeys[index]),
                   itemCount: journeys.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(height: 16);
+                  },
                 ),
               ),
             ],
@@ -163,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 6),
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: const Color(0x1023BBDD),
@@ -173,10 +176,21 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           Text(
-            "Client - ${journey.clientName}",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            journey.clientName,
+            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textGray),
           ),
-          Text("Address - ${journey.address}", style: TextStyle(fontSize: 12)),
+          SizedBox(
+            // width: double.infinity,
+            child: journey.isOngoing
+                ? Text(
+                    "Ongoing Journey",
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    "Distance travelled : ${calculateDistance()}",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+          ),
           SizedBox(height: 4),
           Row(
             children: [
@@ -236,13 +250,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           SizedBox(height: 8),
-
-          SizedBox(
-            width: double.infinity,
-            child: journey.isOngoing
-                ? Text("Ongoin Journey", style: TextStyle(color: Colors.red))
-                : Text("Distance travelled : ${calculateDistance()}"),
-          ),
         ],
       ),
     );
