@@ -182,7 +182,7 @@ class _FormScreenState extends State<FormScreen> {
       res = await provider.startJourney(startJourneyModel: startJourneyModel);
     }
 
-    if (!mounted) return; // ✅ guard before using context again
+    if (!mounted) return;
 
     res.fold((l) => showSnackBar(context, l.message, false), (r) {
       showSnackBar(context, r, true);
@@ -205,7 +205,7 @@ class _FormScreenState extends State<FormScreen> {
             image: DecorationImage(
               image: AssetImage('assets/bg_image.jpg'),
               fit: BoxFit.cover,
-              opacity: 0.1,
+              opacity: 0.04,
             ),
           ),
           child: SingleChildScrollView(

@@ -36,8 +36,19 @@ class _HomeScreenState extends State<HomeScreen> {
       isOngoingJourney = false;
     }
     cameras = await availableCameras();
+    if (!mounted) {
+      await _waitUntilMounted();
+    }
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _waitUntilMounted() async {
+    while (!mounted) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 
   @override
@@ -51,7 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
             image: DecorationImage(
               image: AssetImage('assets/bg_image.jpg'),
               fit: BoxFit.cover,
-              opacity: 0.1,
+              opacity: 0.04,
+              // opacity: 0.04,
             ),
           ),
 
@@ -67,7 +79,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, height: 1),
               ),
               SizedBox(height: 16),
-              Row(spacing: 16, children: [actionCardWidget(), actionCardWidget()]),
+              Row(
+                spacing: 16,
+                children: [
+                  actionCardWidget("assets/punchin.png", "Punch In"),
+                  actionCardWidget("assets/punchout.png", "Punch Out"),
+                ],
+              ),
               SizedBox(height: 16),
               !isOngoingJourney
                   ? CustomButton(
@@ -132,14 +150,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget actionCardWidget() {
+  Widget actionCardWidget(String imagePath, String title) {
     return Expanded(
       child: Container(
         height: 130,
         decoration: BoxDecoration(
           color: const Color(0x1023BBDD),
           borderRadius: BorderRadius.circular(24.0),
-          border: Border.all(color: const Color(0xFF23BCDD), width: 1.0),
+        ),
+        child: Column(
+          spacing: 8,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(imagePath),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
         ),
       ),
     );
@@ -171,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: const Color(0x1023BBDD),
         borderRadius: BorderRadius.circular(24.0),
-        border: Border.all(color: const Color(0xFF23BCDD), width: 1.0),
+        border: Border.all(color: AppColors.borderColor, width: 1.0),
       ),
       child: Column(
         children: [

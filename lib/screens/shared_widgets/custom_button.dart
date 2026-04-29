@@ -37,7 +37,7 @@ class CustomButton extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(
           width: borderColor == null ? 0 : 1,
-          color: borderColor ?? AppColors.primaryButtonBorder,
+          color: borderColor ?? AppColors.buttonBorder,
         ),
         borderRadius: BorderRadius.circular(borderRadius ?? 32),
         color: color ?? AppColors.primary,
@@ -45,7 +45,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: borderColor ?? AppColors.primaryButtonBorder),
+            side: BorderSide(color: borderColor ?? AppColors.buttonBorder),
             borderRadius: BorderRadius.circular(borderRadius ?? 32),
           ),
           backgroundColor: color ?? Colors.transparent,

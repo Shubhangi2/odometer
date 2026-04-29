@@ -154,7 +154,7 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
             image: DecorationImage(
               image: AssetImage('assets/bg_image.jpg'),
               fit: BoxFit.cover,
-              opacity: 0.1,
+              opacity: 0.04,
             ),
           ),
 
@@ -291,8 +291,11 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
   }
 
   Future<void> _freezeReading() async {
-    await _cameraController?.stopImageStream();
-
+    if (_cameraController != null &&
+        _cameraController!.value.isInitialized &&
+        _cameraController!.value.isStreamingImages) {
+      await _cameraController!.stopImageStream();
+    }
     try {
       final boundary = _previewKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary != null) {
