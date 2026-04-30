@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'odometer',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }
