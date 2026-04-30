@@ -248,6 +248,7 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
                                   "Image not captured, Please try again",
                                   false,
                                 );
+                                _scanAgain();
                                 return;
                               }
 
@@ -257,6 +258,7 @@ class _CaptureImageScreenState extends State<CaptureImageScreen> {
                                   "Reading not captured, Please try again",
                                   false,
                                 );
+                                _scanAgain();
                                 return;
                               }
                               Navigator.pop(

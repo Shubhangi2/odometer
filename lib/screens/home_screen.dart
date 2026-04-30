@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 spacing: 16,
                 children: [
-                  actionCardWidget("assets/punchin.png", "Punch In"),
+                  actionCardWidget("assets/disabled_punchin.png", "09:30 AM"),
                   actionCardWidget("assets/punchout.png", "Punch Out"),
                 ],
               ),
@@ -153,17 +153,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget actionCardWidget(String imagePath, String title) {
     return Expanded(
       child: Container(
-        height: 130,
+        padding: EdgeInsets.all(12),
+        // height: 130,
         decoration: BoxDecoration(
           color: const Color(0x1023BBDD),
           borderRadius: BorderRadius.circular(24.0),
+          border: Border.all(color: AppColors.borderColor, width: 1.0),
         ),
         child: Column(
-          spacing: 8,
+          spacing: 12,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(imagePath),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, height: 1),
+            ),
           ],
         ),
       ),
@@ -192,82 +197,65 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0x1023BBDD),
         borderRadius: BorderRadius.circular(24.0),
         border: Border.all(color: AppColors.borderColor, width: 1.0),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             journey.clientName,
-            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textGray),
+            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textGray, fontSize: 15),
           ),
-          SizedBox(
-            // width: double.infinity,
-            child: journey.isOngoing
-                ? Text(
-                    "Ongoing Journey",
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    "Distance travelled : ${calculateDistance()}",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-          ),
-          SizedBox(height: 4),
+          Text(journey.address, style: TextStyle(fontSize: 12, color: AppColors.textGray)),
+
+          Divider(thickness: 1),
           Row(
             children: [
               Expanded(
                 child: Column(
-                  spacing: 4,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("Start time:", style: TextStyle(color: AppColors.hintGray, fontSize: 13)),
                     Text(
-                      "Start info:",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
+                      getFormattedDate(journey.startedAt),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
-                    Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.access_time, color: Colors.white, size: 18),
-                        Text(getFormattedDate(journey.startedAt)),
-                      ],
+                    SizedBox(height: 8),
+                    Text(
+                      "Start reading:",
+                      style: TextStyle(color: AppColors.hintGray, fontSize: 13),
                     ),
 
-                    Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.speed, color: Colors.white, size: 18),
-                        Text("${journey.startReading} km"),
-                      ],
+                    Text(
+                      "${journey.startReading} km",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
                   ],
                 ),
               ),
               Expanded(
                 child: Column(
-                  spacing: 4,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Text(
+                    //   "End info:",
+                    //   style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
+                    // ),
+                    Text("End time:", style: TextStyle(color: AppColors.hintGray, fontSize: 13)),
                     Text(
-                      "End info:",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
+                      getFormattedDate(journey.endedAt ?? ''),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
-                    Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.access_time, color: Colors.white, size: 18),
-                        Text(getFormattedDate(journey.endedAt ?? '')),
-                      ],
-                    ),
-                    Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.speed, color: Colors.white, size: 18),
-                        Text(journey.endReading == null ? "N.A." : "${journey.endReading} km"),
-                      ],
+                    SizedBox(height: 8),
+                    Text("End reading:", style: TextStyle(color: AppColors.hintGray, fontSize: 13)),
+
+                    Text(
+                      journey.endReading == null ? "N.A." : "${journey.endReading} km",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
                   ],
                 ),
@@ -275,6 +263,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           SizedBox(height: 8),
+          journey.isOngoing
+              ? Text(
+                  "Ongoing Journey",
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16),
+                )
+              : Text(
+                  "Distance travelled : ${calculateDistance()}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                    fontSize: 16,
+                  ),
+                ),
         ],
       ),
     );

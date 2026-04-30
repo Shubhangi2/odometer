@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:speedometer/core/app_colors.dart';
 import 'package:speedometer/core/utility_functions.dart';
+import 'package:speedometer/models/client_model.dart';
 import 'package:speedometer/models/end_journey_model.dart';
 import 'package:speedometer/models/journey_model.dart';
 import 'package:speedometer/models/odometer_model.dart';
@@ -16,6 +17,7 @@ import 'package:speedometer/screens/capture_image_screen.dart';
 import 'package:speedometer/screens/shared_widgets/custom_button.dart';
 import 'package:speedometer/screens/shared_widgets/custom_dropdown_widget.dart';
 import 'package:speedometer/screens/shared_widgets/custom_input_formatter.dart';
+import 'package:speedometer/screens/shared_widgets/loader.dart';
 import 'package:speedometer/screens/shared_widgets/show_snackbar.dart';
 
 class FormScreen extends StatefulWidget {
@@ -39,22 +41,49 @@ class _FormScreenState extends State<FormScreen> {
   bool isImageCaptured = false;
   Uint8List? frozenBytes;
   bool isclientSelected = false;
-  String selectedClient = "";
+  ClientModel? selectedClient;
   String journeyImage = "";
-
-  List<String> clients = [
-    "Shubhangi",
-    "Yogita",
-    "Renuka",
-    "Shrishail",
-    "Saurabh",
-    "Sandeep",
-    "Rushabh",
-    "Bhalchandra",
-    "Dattatrey",
-    "Anirudh",
-  ];
   bool isLoading = false;
+
+  // List<String> clients = [
+  //   "Shubhangi",
+  //   "Yogita",
+  //   "Renuka",
+  //   "Shrishail",
+  //   "Saurabh",
+  //   "Sandeep",
+  //   "Rushabh",
+  //   "Bhalchandra",
+  //   "Dattatrey",
+  //   "Anirudh",
+  // ];
+
+  List<ClientModel> clients = [
+    ClientModel(
+      name: "Reliance Industries Limited",
+      address: "Reliance Corporate Park, Ghansoli, Navi Mumbai",
+    ),
+    ClientModel(
+      name: "Larsen & Toubro (L&T)",
+      address: "Reliance Corporate Park, Ghansoli, Navi Mumbai",
+    ),
+    ClientModel(
+      name: "Siemens India",
+      address: "Plot No. D-117, TTC Industrial Area, Nerul, Navi Mumbai, Maharashtra",
+    ),
+    ClientModel(
+      name: "Tata Power",
+      address: "Plot No. D-117, TTC Industrial Area, Nerul, Navi Mumbai, Maharashtra",
+    ),
+    ClientModel(
+      name: "Accenture India",
+      address: "Mindspace, Airoli, Navi Mumbai, Maharashtra 400708",
+    ),
+    ClientModel(
+      name: "Capgemini India",
+      address: "IT Park, Airoli, Navi Mumbai, Maharashtra 400708",
+    ),
+  ];
 
   @override
   void initState() {
@@ -75,87 +104,31 @@ class _FormScreenState extends State<FormScreen> {
     await UtilityFunctions().getCurrentLocation();
   }
 
-  // Future<void> submitDetails(bool isStartJourney) async {
-  //   if (!isclientSelected && isStartJourney) {
-  //     showSnackBar(context, "Please select client name", false);
-  //     return;
-  //   }
-  //   if (scannedTextController.text.isEmpty) {
-  //     showSnackBar(context, "Speedometer not captured", false);
-  //     return;
-  //   }
-  //   Position? position = await UtilityFunctions().getCurrentLocation();
-  //   if (position == null) {
-  //     showSnackBar(context, "Location not found", false);
-  //     return;
-  //   }
-  //   if (journeyImage.isEmpty) {
-  //     showSnackBar(context, "Image not captured, please try again", false);
-  //     return;
-  //   }
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-
-  //   final res;
-  //   if (!isStartJourney && widget.startJourneyModel != null) {
-  //     EndJourneyModel endJourneyModel = EndJourneyModel(
-  //       endReading: scannedTextController.text,
-  //       endLocation: "${position.latitude},${position.longitude}",
-  //       endReadingImage: journeyImage,
-  //       endedAt: DateTime.now().toString(),
-  //       id: widget.startJourneyModel!.id,
-  //       isOngoing: false,
-  //     );
-  //     res = await context.read<JourneyProvider>().endJourney(endJourneyModel: endJourneyModel);
-  //   } else {
-  //     StartJourneyModel startJourneyModel = StartJourneyModel(
-  //       clientName: selectedClient,
-  //       startLocation: "${position.latitude},${position.longitude}",
-  //       isOngoing: true,
-  //       address: "dummy address",
-  //       startReading: scannedTextController.text,
-  //       startedAt: DateTime.now().toString(),
-  //       startReadingImage: journeyImage,
-  //     );
-  //     res = await context.read<JourneyProvider>().startJourney(
-  //       startJourneyModel: startJourneyModel,
-  //     );
-  //   }
-  //   res.fold((l) => showSnackBar(context, l.message, false), (r) {
-  //     showSnackBar(context, r, true);
-  //     Navigator.of(context).pop(true);
-  //   });
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-  // }
   Future<void> submitDetails(bool isStartJourney) async {
-    if (!isclientSelected && isStartJourney) {
+    if (selectedClient == null && isStartJourney) {
       showSnackBar(context, "Please select client name", false);
       return;
     }
     if (scannedTextController.text.isEmpty) {
-      showSnackBar(context, "Speedometer not captured", false);
-      return;
-    }
-
-    Position? position = await UtilityFunctions().getCurrentLocation();
-
-    if (!mounted) return; // ✅ guard after await
-
-    if (position == null) {
-      showSnackBar(context, "Location not found", false);
+      showSnackBar(context, "Odometer not captured", false);
       return;
     }
     if (journeyImage.isEmpty) {
       showSnackBar(context, "Image not captured, please try again", false);
       return;
     }
-
     setState(() => isLoading = true);
 
-    // ✅ capture provider BEFORE awaits
+    Position? position = await UtilityFunctions().getCurrentLocation();
+
+    if (!mounted) return;
+
+    if (position == null) {
+      showSnackBar(context, "Location not found", false);
+      setState(() => isLoading = false);
+      return;
+    }
+
     final provider = context.read<JourneyProvider>();
 
     final res;
@@ -171,10 +144,10 @@ class _FormScreenState extends State<FormScreen> {
       res = await provider.endJourney(endJourneyModel: endJourneyModel);
     } else {
       StartJourneyModel startJourneyModel = StartJourneyModel(
-        clientName: selectedClient,
+        clientName: selectedClient?.name ?? '',
         startLocation: "${position.latitude},${position.longitude}",
         isOngoing: true,
-        address: "dummy address",
+        address: selectedClient?.address ?? '',
         startReading: scannedTextController.text,
         startedAt: DateTime.now().toString(),
         startReadingImage: journeyImage,
@@ -186,7 +159,7 @@ class _FormScreenState extends State<FormScreen> {
 
     res.fold((l) => showSnackBar(context, l.message, false), (r) {
       showSnackBar(context, r, true);
-      Navigator.of(context).pop(true); // ✅ now safe
+      Navigator.of(context).pop(true);
     });
 
     setState(() => isLoading = false);
@@ -197,7 +170,6 @@ class _FormScreenState extends State<FormScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.bgColor,
-
         body: Container(
           height: double.infinity,
           padding: EdgeInsets.symmetric(vertical: 8),
@@ -224,7 +196,7 @@ class _FormScreenState extends State<FormScreen> {
                   ),
                   SizedBox(height: 20),
                   widget.isStartJourney
-                      ? CustomDropdownWidget(
+                      ? CustomDropdownWidget<ClientModel>(
                           dropdownList: clients,
                           hintText: "Select Client",
 
@@ -235,17 +207,18 @@ class _FormScreenState extends State<FormScreen> {
                               selectedClient = value;
                             });
                           },
-                          itemToString: (item) => item,
+                          itemToString: (item) => item.name,
                         )
                       : Text(
-                          "Selected Client - Client 1",
+                          "Selected Client - ${widget.startJourneyModel!.clientName}",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-
                   const SizedBox(height: 20),
-                  Text("Address : ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    "Address : ${widget.isStartJourney ? selectedClient?.address ?? '' : widget.startJourneyModel!.address}",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 12),
-
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.secondary,
@@ -297,13 +270,16 @@ class _FormScreenState extends State<FormScreen> {
                     ),
 
                   SizedBox(height: 24),
-                  if (isImageCaptured)
-                    CustomButton(
-                      text: "Submit",
-                      onPressed: () async {
-                        await submitDetails(widget.isStartJourney);
-                      },
-                    ),
+                  isLoading
+                      ? Loader()
+                      : isImageCaptured
+                      ? CustomButton(
+                          text: "Submit",
+                          onPressed: () async {
+                            await submitDetails(widget.isStartJourney);
+                          },
+                        )
+                      : SizedBox(),
                 ],
               ),
             ),
