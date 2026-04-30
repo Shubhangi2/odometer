@@ -1,10 +1,10 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:speedometer/core/failure.dart';
-import 'package:speedometer/db/sql_helper.dart';
-import 'package:speedometer/db/tables/journey_table.dart';
-import 'package:speedometer/models/journey_model.dart';
-import 'package:speedometer/models/start_journey_model.dart';
-import 'package:speedometer/models/end_journey_model.dart';
+import 'package:odometer/core/failure.dart';
+import 'package:odometer/db/sql_helper.dart';
+import 'package:odometer/db/tables/journey_table.dart';
+import 'package:odometer/models/journey_model.dart';
+import 'package:odometer/models/start_journey_model.dart';
+import 'package:odometer/models/end_journey_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class JourneyDao {

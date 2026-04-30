@@ -1,4 +1,4 @@
-import 'package:speedometer/db/dao/journey_dao.dart';
+import 'package:odometer/db/dao/journey_dao.dart';
 
 class JourneyDatasource {
   final JourneyDao dao;

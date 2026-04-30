@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:speedometer/core/failure.dart';
-import 'package:speedometer/db/dao/journey_dao.dart';
-import 'package:speedometer/models/end_journey_model.dart';
-import 'package:speedometer/models/journey_model.dart';
-import 'package:speedometer/models/start_journey_model.dart';
+import 'package:odometer/core/failure.dart';
+import 'package:odometer/db/dao/journey_dao.dart';
+import 'package:odometer/models/end_journey_model.dart';
+import 'package:odometer/models/journey_model.dart';
+import 'package:odometer/models/start_journey_model.dart';
 
 class JourneyProvider extends ChangeNotifier {
   final JourneyDao dao;

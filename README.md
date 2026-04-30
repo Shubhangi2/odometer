@@ -1,4 +1,4 @@
-# speedometer
+# odometer
 
 A new Flutter project.
 

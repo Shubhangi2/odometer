@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:speedometer/core/app_colors.dart';
-import 'package:speedometer/screens/home_screen.dart';
-import 'package:speedometer/screens/shared_widgets/custom_button.dart';
-import 'package:speedometer/screens/shared_widgets/custom_text_form_field.dart';
+import 'package:odometer/core/app_colors.dart';
+import 'package:odometer/screens/home_screen.dart';
+import 'package:odometer/screens/shared_widgets/custom_button.dart';
+import 'package:odometer/screens/shared_widgets/custom_text_form_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

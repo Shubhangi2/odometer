@@ -5,20 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:speedometer/core/app_colors.dart';
-import 'package:speedometer/core/utility_functions.dart';
-import 'package:speedometer/models/client_model.dart';
-import 'package:speedometer/models/end_journey_model.dart';
-import 'package:speedometer/models/journey_model.dart';
-import 'package:speedometer/models/odometer_model.dart';
-import 'package:speedometer/models/start_journey_model.dart';
-import 'package:speedometer/provider/journey_provider.dart';
-import 'package:speedometer/screens/capture_image_screen.dart';
-import 'package:speedometer/screens/shared_widgets/custom_button.dart';
-import 'package:speedometer/screens/shared_widgets/custom_dropdown_widget.dart';
-import 'package:speedometer/screens/shared_widgets/custom_input_formatter.dart';
-import 'package:speedometer/screens/shared_widgets/loader.dart';
-import 'package:speedometer/screens/shared_widgets/show_snackbar.dart';
+import 'package:odometer/core/app_colors.dart';
+import 'package:odometer/core/utility_functions.dart';
+import 'package:odometer/models/client_model.dart';
+import 'package:odometer/models/end_journey_model.dart';
+import 'package:odometer/models/journey_model.dart';
+import 'package:odometer/models/odometer_model.dart';
+import 'package:odometer/models/start_journey_model.dart';
+import 'package:odometer/provider/journey_provider.dart';
+import 'package:odometer/screens/capture_image_screen.dart';
+import 'package:odometer/screens/shared_widgets/custom_button.dart';
+import 'package:odometer/screens/shared_widgets/custom_dropdown_widget.dart';
+import 'package:odometer/screens/shared_widgets/custom_input_formatter.dart';
+import 'package:odometer/screens/shared_widgets/loader.dart';
+import 'package:odometer/screens/shared_widgets/show_snackbar.dart';
 
 class FormScreen extends StatefulWidget {
   final bool isStartJourney;
@@ -335,7 +335,7 @@ class _FormScreenState extends State<FormScreen> {
               Text("Click here", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
               Text(
-                "To Capture Speedometer Reading",
+                "To Capture odometer Reading",
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ],

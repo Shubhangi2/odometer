@@ -1,4 +1,4 @@
-import 'package:speedometer/core/app_colors.dart';
+import 'package:odometer/core/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class Loader extends StatelessWidget {

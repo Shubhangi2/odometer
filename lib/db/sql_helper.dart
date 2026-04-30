@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:speedometer/db/tables/journey_table.dart';
+import 'package:odometer/db/tables/journey_table.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SqlHelper {
   static final SqlHelper dbProvider = SqlHelper();
 
-  static const DATABASE_NAME = "speedometer.flutter.db";
+  static const DATABASE_NAME = "odometer.flutter.db";
   static const DATABASE_VERSION = 1;
 
   Database? _database;

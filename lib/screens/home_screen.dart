@@ -2,11 +2,11 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:speedometer/core/app_colors.dart';
-import 'package:speedometer/models/journey_model.dart';
-import 'package:speedometer/provider/journey_provider.dart';
-import 'package:speedometer/screens/form_screen.dart';
-import 'package:speedometer/screens/shared_widgets/custom_button.dart';
+import 'package:odometer/core/app_colors.dart';
+import 'package:odometer/models/journey_model.dart';
+import 'package:odometer/provider/journey_provider.dart';
+import 'package:odometer/screens/form_screen.dart';
+import 'package:odometer/screens/shared_widgets/custom_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

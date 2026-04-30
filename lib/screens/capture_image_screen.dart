@@ -5,9 +5,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
-import 'package:speedometer/core/app_colors.dart';
-import 'package:speedometer/models/odometer_model.dart';
-import 'package:speedometer/screens/shared_widgets/show_snackbar.dart';
+import 'package:odometer/core/app_colors.dart';
+import 'package:odometer/models/odometer_model.dart';
+import 'package:odometer/screens/shared_widgets/show_snackbar.dart';
 
 class CaptureImageScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
