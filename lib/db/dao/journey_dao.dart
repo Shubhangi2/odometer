@@ -49,7 +49,20 @@ class JourneyDao {
   Future<List<JourneyModel>> getAllJourneys() async {
     final db = await sqlHelper.database;
     try {
-      var res = await db.query(JourneyTable.tableName, orderBy: '${JourneyTable.columnId} DESC');
+      var res = await db.query(
+        JourneyTable.tableName,
+        columns: [
+          JourneyTable.columnId,
+          JourneyTable.columnIsOngoing,
+          JourneyTable.columnClientName,
+          JourneyTable.columnAddress,
+          JourneyTable.columnStartReading,
+          JourneyTable.columnStartedAt,
+          JourneyTable.columnEndReading,
+          JourneyTable.columnEndedAt,
+        ],
+        orderBy: '${JourneyTable.columnId} DESC',
+      );
 
       List<JourneyModel> journeys = [];
       for (var journey in res) {
@@ -68,9 +81,20 @@ class JourneyDao {
     try {
       var res = await db.query(
         JourneyTable.tableName,
+        columns: [
+          JourneyTable.columnId,
+          JourneyTable.columnIsOngoing,
+          JourneyTable.columnClientName,
+          JourneyTable.columnAddress,
+          JourneyTable.columnStartReading,
+          JourneyTable.columnStartedAt,
+          JourneyTable.columnEndReading,
+          JourneyTable.columnEndedAt,
+        ],
         orderBy: '${JourneyTable.columnId} DESC',
         limit: 5,
       );
+      print(res);
 
       List<JourneyModel> journeys = [];
       for (var journey in res) {

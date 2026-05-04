@@ -133,14 +133,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   : SizedBox(),
 
               Text("Recent Journeys", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+
               SizedBox(height: 8),
               Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) => historyWidget(journeys[index]),
-                  itemCount: journeys.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(height: 16);
+                child: RefreshIndicator(
+                  color: AppColors.primary,
+                  onRefresh: () async {
+                    await callAsyncTask();
                   },
+                  child: ListView.separated(
+                    itemBuilder: (context, index) => historyWidget(journeys[index]),
+                    itemCount: journeys.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 16);
+                    },
+                  ),
                 ),
               ),
             ],
