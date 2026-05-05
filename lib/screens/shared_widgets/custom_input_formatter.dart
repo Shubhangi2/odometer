@@ -1,23 +1,36 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomInputFormatter extends TextInputFormatter {
+  final int totalLength;
+  final int editableFromIndex;
+
+  CustomInputFormatter({required this.totalLength, required this.editableFromIndex});
+
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    // Allow deletion only if we're removing the 6th digit
-    if (newValue.text.length < oldValue.text.length) {
-      // Only allow deletion if old value had 6 digits (deleting the 6th)
-      if (oldValue.text.length <= 3) {
-        return oldValue; // allow delete
+    final oldText = oldValue.text;
+    final newText = newValue.text;
+
+    if (newText.length < oldText.length) {
+      final deletedIndex = newText.length;
+      if (deletedIndex < editableFromIndex) {
+        return oldValue;
       }
-      return newValue; // block deletion of other digits
+      return newValue;
+    }
+    if (newText.length > oldText.length) {
+      if (newText.length > totalLength) {
+        return oldValue;
+      }
+
+      final insertedIndex = newText.length - 1;
+      if (insertedIndex < editableFromIndex) {
+        return oldValue;
+      }
+      return newValue;
     }
 
-    // Allow typing only the 6th digit
-    if (newValue.text.length > 3) {
-      return newValue; // allow adding the 6th digit
-    }
-
-    // Block all other changes
     return oldValue;
   }
 }

@@ -254,7 +254,10 @@ class _FormScreenState extends State<FormScreen> {
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(7),
-                              CustomInputFormatter(),
+                              CustomInputFormatter(
+                                totalLength: scannedTextController.text.length,
+                                editableFromIndex: scannedTextController.text.length - 2,
+                              ),
                             ],
                             keyboardType: const TextInputType.numberWithOptions(decimal: false),
                             style: const TextStyle(

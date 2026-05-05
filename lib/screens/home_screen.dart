@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> callAsyncTask() async {
+    cameras = await availableCameras();
     currentJourneyModel = await context.read<JourneyProvider>().getLastJourney();
     journeys = await context.read<JourneyProvider>().getLastFiveJourneys();
     if (currentJourneyModel != null && currentJourneyModel!.isOngoing == true) {
@@ -35,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       isOngoingJourney = false;
     }
-    cameras = await availableCameras();
     if (!mounted) {
       await _waitUntilMounted();
     }
