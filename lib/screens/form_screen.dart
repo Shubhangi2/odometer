@@ -44,6 +44,7 @@ class _FormScreenState extends State<FormScreen> {
   ClientModel? selectedClient;
   String journeyImage = "";
   bool isLoading = false;
+  bool showError = false;
 
   // List<String> clients = [
   //   "Shubhangi",
@@ -113,11 +114,23 @@ class _FormScreenState extends State<FormScreen> {
       showSnackBar(context, "Odometer not captured", false);
       return;
     }
+    if (scannedTextController.text.length != 6) {
+      showSnackBar(context, "Odometer reading value should be of 6 digits", false);
+      setState(() {
+        showError = true;
+      });
+      return;
+    }
     if (journeyImage.isEmpty) {
       showSnackBar(context, "Image not captured, please try again", false);
       return;
     }
-    setState(() => isLoading = true);
+
+    setState(() {
+      isLoading = true;
+      showError = false;
+      showError = false;
+    });
 
     Position? position = await UtilityFunctions().getCurrentLocation();
 
@@ -130,7 +143,6 @@ class _FormScreenState extends State<FormScreen> {
     }
 
     final provider = context.read<JourneyProvider>();
-
     final res;
     if (!isStartJourney && widget.startJourneyModel != null) {
       EndJourneyModel endJourneyModel = EndJourneyModel(
@@ -248,16 +260,19 @@ class _FormScreenState extends State<FormScreen> {
                             "Odometer Reading",
                             style: TextStyle(color: Colors.white54, fontSize: 12),
                           ),
+                          if (showError) SizedBox(height: 8),
+                          if (showError)
+                            Text(
+                              "value should be of 6 digits",
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ),
 
                           TextFormField(
                             controller: scannedTextController,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(7),
-                              CustomInputFormatter(
-                                totalLength: scannedTextController.text.length,
-                                editableFromIndex: scannedTextController.text.length - 2,
-                              ),
+                              LengthLimitingTextInputFormatter(6),
+                              CustomInputFormatter(),
                             ],
                             keyboardType: const TextInputType.numberWithOptions(decimal: false),
                             style: const TextStyle(

@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:odometer/screens/shared_widgets/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:odometer/core/app_colors.dart';
 import 'package:odometer/models/journey_model.dart';
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<JourneyModel> journeys = [];
   bool isOngoingJourney = false;
   late List<CameraDescription> cameras;
+  bool isLoadingJourneyList = true;
 
   @override
   void initState() {
@@ -29,9 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> callAsyncTask() async {
     cameras = await availableCameras();
+
     currentJourneyModel = await context.read<JourneyProvider>().getLastJourney();
-    journeys = await context.read<JourneyProvider>().getLastFiveJourneys();
     if (currentJourneyModel != null && currentJourneyModel!.isOngoing == true) {
+      print(currentJourneyModel!.isOngoing);
       isOngoingJourney = true;
     } else {
       isOngoingJourney = false;
@@ -40,8 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
       await _waitUntilMounted();
     }
 
+    journeys = await context.read<JourneyProvider>().getLastFiveJourneys();
+
     if (mounted) {
-      setState(() {});
+      setState(() {
+        isLoadingJourneyList = false;
+      });
     }
   }
 
@@ -135,21 +142,23 @@ class _HomeScreenState extends State<HomeScreen> {
               Text("Recent Journeys", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
 
               SizedBox(height: 8),
-              Expanded(
-                child: RefreshIndicator(
-                  color: AppColors.primary,
-                  onRefresh: () async {
-                    await callAsyncTask();
-                  },
-                  child: ListView.separated(
-                    itemBuilder: (context, index) => historyWidget(journeys[index]),
-                    itemCount: journeys.length,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(height: 16);
-                    },
-                  ),
-                ),
-              ),
+              isLoadingJourneyList
+                  ? const Loader()
+                  : Expanded(
+                      child: RefreshIndicator(
+                        color: AppColors.primary,
+                        onRefresh: () async {
+                          await callAsyncTask();
+                        },
+                        child: ListView.separated(
+                          itemBuilder: (context, index) => historyWidget(journeys[index]),
+                          itemCount: journeys.length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const SizedBox(height: 16);
+                          },
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -183,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget historyWidget(JourneyModel journey) {
+    print(" ongoing journey : ${journey.isOngoing}, end reading : ${journey.endReading}");
     String getFormattedDate(String date) {
       print(date);
       if (date.isEmpty) return "N.A.";
@@ -192,14 +202,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     String calculateDistance() {
-      if (journey.endReading == null) return "N.A.";
+      if (journey.endReading == null || journey.endReading!.isEmpty) return "N.A.";
       int startReading = int.parse(journey.startReading) % 1000;
       int endReading = int.parse(journey.endReading!) % 1000;
-
       int distance = endReading - startReading;
-
       if (distance < 0) distance += 1000;
-
       return "${distance.toString()} Km";
     }
 
@@ -261,7 +268,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text("End reading:", style: TextStyle(color: AppColors.hintGray, fontSize: 13)),
 
                     Text(
-                      journey.endReading == null ? "N.A." : "${journey.endReading} km",
+                      journey.endReading == null || journey.endReading!.isEmpty
+                          ? "N.A."
+                          : "${journey.endReading} km",
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
                   ],

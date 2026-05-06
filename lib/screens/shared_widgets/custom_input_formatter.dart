@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomInputFormatter extends TextInputFormatter {
-  final int totalLength;
-  final int editableFromIndex;
-
-  CustomInputFormatter({required this.totalLength, required this.editableFromIndex});
+  CustomInputFormatter();
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
@@ -13,24 +10,17 @@ class CustomInputFormatter extends TextInputFormatter {
     final newText = newValue.text;
 
     if (newText.length < oldText.length) {
-      final deletedIndex = newText.length;
-      if (deletedIndex < editableFromIndex) {
-        return oldValue;
+      if (newText.length >= 4) {
+        return newValue;
       }
-      return newValue;
+      return oldValue;
     }
     if (newText.length > oldText.length) {
-      if (newText.length > totalLength) {
-        return oldValue;
+      if (newText.length <= 6) {
+        return newValue;
       }
-
-      final insertedIndex = newText.length - 1;
-      if (insertedIndex < editableFromIndex) {
-        return oldValue;
-      }
-      return newValue;
+      return oldValue;
     }
-
     return oldValue;
   }
 }
